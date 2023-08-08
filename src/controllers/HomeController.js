@@ -162,28 +162,34 @@ function callSendAPI(sender_psid, response) {
 
 }
 
-let setupProfile = (req, res) => {
+let setupProfile = async (req, res) => {
     //Call Facebook profile api
     let request_body = {
-        "get_started": {"payload": "GET_STARTED"}
+        "greeting":[
+            {
+              "locale":"default",
+              "text":"Hello {{user_first_name}}!"
+            }
+          ]
+        // "get_started": {"payload": "GET_STARTED"},
+        // "whitelisted_domains":["https://dawn-brook-301.fly.dev/"]
     }
 
     // Send the HTTP request to the Messenger Platform
-    request({
-        "uri": `https://graph.facebook.com/v2.6/me/messenger_profile?access_token=${PAGE_ACCESS_TOKEN}>`,
+    await request({
+        "uri": `https://graph.facebook.com/v17.0/me/messenger_profile?access_token=${PAGE_ACCESS_TOKEN}`,
         "qs": { "access_token": PAGE_ACCESS_TOKEN },
         "method": "POST",
         "json": request_body
     }, (err, res, body) => {
+        console.log(body);
         if (!err) {
             console.log('Set up profile sucessfully!')
         } else {
             console.error("Unable to send message:" + err);
         }
     });
-    res.sendStatus(200);
-    
-
+    res.sendStatus(200).send("Set up user profile sucessfully!");
 }
 
 module.exports = {
