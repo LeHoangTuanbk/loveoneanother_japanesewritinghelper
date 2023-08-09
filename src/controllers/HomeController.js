@@ -1,6 +1,6 @@
 require('dotenv').config();
 import request from "request"
-import chatbotService from "../routes/chatbotService";
+import chatbotService from "../services/chatbotService";
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN
 
 let getHomePage = (req, res) => {
@@ -69,7 +69,6 @@ let getWebhook = (req, res) => {
             res.sendStatus(403);
         }
     }
-
 }
 
 // Handles messages events
@@ -133,14 +132,19 @@ async function handlePostback(sender_psid, received_postback) {
         case "no":
             response = { "text": "Oops, try sending another image." };
             break;
+
+        case "RESTART_CONVERSATION":
+            await chatbotService.handleGetStarted(sender_psid);
+            response = { "text": "You requested restart conversation!"};
+            break;
         case "GET_STARTED":
             await chatbotService.handleGetStarted(sender_psid);
             response = { "text": "Hello! What can I help you with today?" };
             break;
         default:
-            response = { "text": `Oops! I don't know how to response with ${payload}. Please try another action!`};
+            response = { "text": `Oops! I don't know how to response with ${payload}. Please try another action!` };
     }
-    
+
     // Send the message to acknowledge the postback
     callSendAPI(sender_psid, response);
 
@@ -159,7 +163,7 @@ function callSendAPI(sender_psid, response) {
     // Send the HTTP request to the Messenger Platform
     request({
         "uri": "https://graph.facebook.com/v2.6/me/messages",
-        "qs": { "access_token": process.env.PAGE_ACCESS_TOKEN },
+        "qs": { "access_token": PAGE_ACCESS_TOKEN },
         "method": "POST",
         "json": request_body
     }, (err, res, body) => {
@@ -203,9 +207,52 @@ let setupProfile = async (req, res) => {
     res.sendStatus(200).send("Set up user profile sucessfully!");
 }
 
+let setupPersistentMenu = async (req, res) => {
+    //Call Facebook profile api
+    let request_body = {
+        "persistent_menu": [
+            {
+                "locale": "default",
+                "composer_input_disabled": false,
+                "call_to_actions": [
+                    {
+                        "type": "postback",
+                        "title": "Restart conversation.",
+                        "payload": "RESTART_CONVERSATION"
+                    },
+                    {
+                        "type": "web_url",
+                        "title": "Report bugs",
+                        "url": "https://www.facebook.com/lehoang.tuanbk",
+                        "webview_height_ratio": "full"
+                    }
+                ]
+            }
+        ]
+    };
+
+    // Send the HTTP request to the Messenger Platform
+    await request({
+        "uri": `https://graph.facebook.com/v17.0/me/messenger_profile?access_token=${PAGE_ACCESS_TOKEN}`,
+        "qs": { "access_token": PAGE_ACCESS_TOKEN },
+        "method": "POST",
+        "json": request_body
+    }, (err, res, body) => {
+        console.log(body);
+        if (!err) {
+            console.log('Set up persistent menu sucessfully!')
+        } else {
+            console.error("Unable to send message:" + err);
+        }
+    });
+
+    res.send("Set up user persistent menu sucessfully!");
+};
+
 module.exports = {
     setupProfile: setupProfile,
     getHomePage: getHomePage,
     postWebhook: postWebhook,
     getWebhook: getWebhook,
+    setupPersistentMenu: setupPersistentMenu,
 }
