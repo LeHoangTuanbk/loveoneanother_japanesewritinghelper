@@ -1,5 +1,6 @@
 require('dotenv').config();
 import request from "request"
+import chatbotService from "../routes/chatbotService";
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN
 
 let getHomePage = (req, res) => {
@@ -118,20 +119,28 @@ function handleMessage(sender_psid, received_message) {
 }
 
 // Handles messaging_postbacks events
-function handlePostback(sender_psid, received_postback) {
+async function handlePostback(sender_psid, received_postback) {
     let response;
 
     // Get the payload for the postback
     let payload = received_postback.payload;
 
     // Set the response based on the postback payload
-    if (payload === 'yes') {
-        response = { "text": "Thanks!" }
-    } else if (payload === 'no') {
-        response = { "text": "Oops, try sending another image." }
-    } else if (payload === "GET_STARTED") {
-        response = {"text": "What can I help you with today?"};
+    switch (payload) {
+        case "yes":
+            response = { "text": "Thanks!" };
+            break;
+        case "no":
+            response = { "text": "Oops, try sending another image." };
+            break;
+        case "GET_STARTED":
+            await chatbotService.handleGetStarted();
+            response = { "text": "Hello! What can I help you with today?" };
+            break;
+        default:
+            response = { "text": `Oops! I don't know how to response with ${payload}. Please try another action!`};
     }
+    
     // Send the message to acknowledge the postback
     callSendAPI(sender_psid, response);
 
@@ -167,12 +176,12 @@ function callSendAPI(sender_psid, response) {
 let setupProfile = async (req, res) => {
     //Call Facebook profile api
     let request_body = {
-        "greeting":[
+        "greeting": [
             {
-              "locale":"default",
-              "text":"Hello {{user_first_name}}!"
+                "locale": "default",
+                "text": "Hello {{user_first_name}}!"
             }
-          ]
+        ]
         // "get_started": {"payload": "GET_STARTED"},
         // "whitelisted_domains":["https://dawn-brook-301.fly.dev/"]
     }
