@@ -25,12 +25,18 @@ function callSendAPI(sender_psid, response) {
             console.error("Unable to send message:" + err);
         }
     });
-
-
 }
 
-let handleGetStarted = () => {
-
+let handleGetStarted = (sender_psid) => {
+    return new Promise (async (resolve, reject) => {
+        try {
+            let response = {"text": "Warning: This message is sent by a bot"}
+            await callSendAPI(sender_psid, response);
+            resolve('done');
+        } catch(e) {
+            reject(e);
+        }
+    })
 };
 
 module.exports = {

@@ -134,7 +134,7 @@ async function handlePostback(sender_psid, received_postback) {
             response = { "text": "Oops, try sending another image." };
             break;
         case "GET_STARTED":
-            await chatbotService.handleGetStarted();
+            await chatbotService.handleGetStarted(sender_psid);
             response = { "text": "Hello! What can I help you with today?" };
             break;
         default:
