@@ -129,7 +129,7 @@ async function handlePostback(sender_psid, received_postback) {
         case "yes":
             response = { "text": "Thanks!" };
             break;
-            
+
         case "no":
             response = { "text": "Oops, try sending another image." };
             break;
@@ -254,7 +254,42 @@ let setupPersistentMenu = async (req, res) => {
 };
 
 let handleRequestForm = (req, res) => {
-    return res.render("requestForm.ejs");
+    let senderID = req.params.senderID;
+    let facebookAppId = process.env.facebookAppId;
+    return res.render("requestForm.ejs",{
+        senderID: senderID,
+        facebookAppId: facebookAppId,
+    });
+}
+
+let handleRequestFormData = async (req, res) => {
+    try {
+        // let customerName = "";
+        // if (req.body.customerName === "") {
+        //     customerName = "Empty";
+        // } else customerName = req.body.customerName;
+
+        // I demo response with sample text
+        // you can check database for customer order's status
+
+        let response1 = {
+            "text": `---Info about your lookup order---
+            \nInput text: ${req.body.text}
+            `
+        };
+
+        // let response2 = templateMessage.setInfoOrderTemplate();
+        //Need to refactor in the future abot send message. 
+
+        await callSendAPI(req.body.psid, response1);
+        // await chatbotService.sendMessage(req.body.psid, response2);
+
+        return res.status(200).json({
+            message: "ok"
+        });
+    } catch (e) {
+        return res.status(500).json({message: "Internal server"});
+    }
 }
 
 module.exports = {
@@ -264,4 +299,6 @@ module.exports = {
     getWebhook: getWebhook,
     setupPersistentMenu: setupPersistentMenu,
     handleRequestForm: handleRequestForm,
+    handleRequestFormData: handleRequestFormData,
+
 }

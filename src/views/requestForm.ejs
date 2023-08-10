@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Requests</title>
     <!-- Latest compiled and minified CSS -->
+    <script>
+        let facebookAppID = "<%= facebookAppId %>";
+        let psid = "<%= senderID %>";
+    </script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 
     <!-- jQuery library -->
@@ -25,7 +29,7 @@
                 <div class="text-center mt-3">
                     <span class="title">Requests Form</span>
                 </div>
-                <input type="text" id="psid" hidden>
+                <input type="text" id="psid" hidden value=<%= senderID %>
                 <div class="form-group">
                     <div class="dropdown">
                         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Choose an

@@ -11,7 +11,8 @@ let initWebRoutes = (app) => {
     router.get("/webhook", HomeController.getWebhook);
 
     router.post("/setup-persistent-menu",HomeController.setupPersistentMenu);
-    router.get("/request-form",HomeController.handleRequestForm);
+    router.get("/request-form/:senderID",HomeController.handleRequestForm);
+    router.post("/handle-request-form",HomeController.handleRequestFormData)
     return app.use('/', router);
 }
 

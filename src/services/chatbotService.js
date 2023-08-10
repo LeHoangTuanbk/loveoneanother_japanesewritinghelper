@@ -79,52 +79,56 @@ function markSeen(sender_psid) {
 }
 
 const ATTACHMENT_URL = "https://www.in.nesinc.com/Content/STUDYGUIDE/images/questions/057_03.png"
-const getStartTemplateVariable = {
-    "attachment": {
-        "type": "template",
-        "payload": {
-            "template_type": "generic",
-            "elements": [{
-                "title": "Test",
-                "subtitle": "Tap a button.",
-                "image_url": ATTACHMENT_URL,
-                "buttons": [
-                    {
-                        "type": "web_url",
-                        "url": `${process.env.WEB_VIEW_REQUEST}`,
-                        "title": "Open webview!",
-                        "webview_height_ratio": "tall",
-                        "messenger_extensions": true,
-                    },
-                    {
-                        "type": "postback",
-                        "title": "Guideline!",
-                        "payload": "GUIDELINE",
-                    }
-                ],
-            }]
+const getStartTemplateVariable = (sender_psid) => {
+    let res = {
+        "attachment": {
+            "type": "template",
+            "payload": {
+                "template_type": "generic",
+                "elements": [{
+                    "title": "Test",
+                    "subtitle": "Tap a button.",
+                    "image_url": ATTACHMENT_URL,
+                    "buttons": [
+                        {
+                            "type": "web_url",
+                            "url": `${process.env.WEB_VIEW_REQUEST}/${sender_psid}`,
+                            "title": "Open webview!",
+                            "webview_height_ratio": "tall",
+                            "messenger_extensions": true,
+                        },
+                        {
+                            "type": "postback",
+                            "title": "Guideline!",
+                            "payload": "GUIDELINE",
+                        }
+                    ],
+                }]
+            }
         }
     }
+
+    return res;
 }
 
 let handleGetStarted = (sender_psid) => {
-    return new Promise (async (resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         try {
             //Sender action
             await markSeen(sender_psid);
             await sendTypingOn(sender_psid);
             //Send text responese
-            let warning_response = {"text": "Warning: This message is sent by a bot"}
+            let warning_response = { "text": "Warning: This message is sent by a bot" }
             await callSendAPI(sender_psid, warning_response);
-            
+
             //Send start template response
-            let template_response = getStartTemplateVariable;
+            let template_response = getStartTemplateVariable(sender_psid);
             await callSendAPI(sender_psid, template_response);
             //
             // let template_response = getStartedTemplate();
             // await callSendAPI(sender_psid, template_response);
             resolve('done');
-        } catch(e) {
+        } catch (e) {
             reject(e);
         }
     })
@@ -173,7 +177,7 @@ let getStartedTemplate = () => {
 }
 
 let handleGuideline = (sender_psid) => {
-    return new Promise (async (resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         try {
             //Sender action
             await markSeen(sender_psid);
@@ -181,7 +185,7 @@ let handleGuideline = (sender_psid) => {
             //Send text responese
             await sendAnImage(sender_psid);
             resolve('done');
-        } catch(e) {
+        } catch (e) {
             reject(e);
         }
     })
@@ -190,14 +194,14 @@ let handleGuideline = (sender_psid) => {
 const CUTE_KITTY_IMAGE = "https://media.tenor.com/6BDywNN7_NgAAAAd/dog-doggo.gif";
 let sendAnImage = (sender_psid) => {
     let response = {
-        "attachment":{
-          "type":"image", 
-          "payload":{
-            "url": CUTE_KITTY_IMAGE, 
-            "is_reusable":true
-          }
+        "attachment": {
+            "type": "image",
+            "payload": {
+                "url": CUTE_KITTY_IMAGE,
+                "is_reusable": true
+            }
         }
-      };
+    };
 
     let request_body = {
         "recipient": {
@@ -224,5 +228,5 @@ let sendAnImage = (sender_psid) => {
 module.exports = {
     handleGetStarted: handleGetStarted,
     handleGuideline: handleGuideline,
-    
+
 }
