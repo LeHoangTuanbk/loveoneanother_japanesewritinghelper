@@ -8,7 +8,7 @@
 
 window.extAsyncInit = function () {
     // the Messenger Extensions JS SDK is done loading 
-    MessengerExtensions.getContext('1020159995866472',
+    MessengerExtensions.getContext(facebookAppID,
         function success(thread_context) {
             // success
             //set psid to input
@@ -18,7 +18,9 @@ window.extAsyncInit = function () {
         function error(err) {
             console.log(err)
             // error
-            console.log("Error in handling requests!");
+            console.log("Error in facebook Messenger Extentions");
+            $("#psid").val(psid);
+
             handleClickButtonRequests();
         }
     );
