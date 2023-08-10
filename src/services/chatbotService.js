@@ -28,6 +28,56 @@ function callSendAPI(sender_psid, response) {
     });
 }
 
+function sendTypingOn(sender_psid) {
+    // Construct the message body
+    let request_body = {
+        "recipient": {
+            "id": sender_psid
+        },
+        "sender_action": "typing_on"
+    }
+
+    // Send the HTTP request to the Messenger Platform
+    request({
+        "uri": "https://graph.facebook.com/v2.6/me/messages",
+        "qs": { "access_token": PAGE_ACCESS_TOKEN },
+        "method": "POST",
+        "json": request_body
+    }, (err, res, body) => {
+
+        if (!err) {
+            console.log('Typing on sent!')
+        } else {
+            console.error("Unable to send message:" + err);
+        }
+    });
+}
+
+function markSeen(sender_psid) {
+    // Construct the message body
+    let request_body = {
+        "recipient": {
+            "id": sender_psid
+        },
+        "sender_action": "mark_seen"
+    }
+
+    // Send the HTTP request to the Messenger Platform
+    request({
+        "uri": "https://graph.facebook.com/v2.6/me/messages",
+        "qs": { "access_token": PAGE_ACCESS_TOKEN },
+        "method": "POST",
+        "json": request_body
+    }, (err, res, body) => {
+
+        if (!err) {
+            console.log('Markseen sent!')
+        } else {
+            console.error("Unable to send message:" + err);
+        }
+    });
+}
+
 const ATTACHMENT_URL = "https://www.in.nesinc.com/Content/STUDYGUIDE/images/questions/057_03.png"
 const getStartTemplateVariable = {
     "attachment": {
@@ -42,12 +92,12 @@ const getStartTemplateVariable = {
                     {
                         "type": "postback",
                         "title": "Open webview!",
-                        "payload": "EXPLAIN_GRAMMAR",
+                        "payload": "OPEN_WEBVIEW",
                     },
                     {
                         "type": "postback",
-                        "title": "Guidline!",
-                        "payload": "GUIDLINE",
+                        "title": "Guideline!",
+                        "payload": "GUIDELINE",
                     }
                 ],
             }]
@@ -58,6 +108,9 @@ const getStartTemplateVariable = {
 let handleGetStarted = (sender_psid) => {
     return new Promise (async (resolve, reject) => {
         try {
+            //Sender action
+            await markSeen(sender_psid);
+            await sendTypingOn(sender_psid);
             //Send text responese
             let warning_response = {"text": "Warning: This message is sent by a bot"}
             await callSendAPI(sender_psid, warning_response);
@@ -116,7 +169,58 @@ let getStartedTemplate = () => {
 
     return response;
 }
+
+let handleGuideline = (sender_psid) => {
+    return new Promise (async (resolve, reject) => {
+        try {
+            //Sender action
+            await markSeen(sender_psid);
+            await sendTypingOn(sender_psid);
+            //Send text responese
+            await sendAnImage(sender_psid);
+            resolve('done');
+        } catch(e) {
+            reject(e);
+        }
+    })
+};
+
+const CUTE_KITTY_IMAGE = "https://i.natgeofe.com/k/ad9b542e-c4a0-4d0b-9147-da17121b4c98/MOmeow1_4x3.png";
+let sendAnImage = (sender_psid) => {
+    let response = {
+        "attachment":{
+          "type":"image", 
+          "payload":{
+            "url": CUTE_KITTY_IMAGE, 
+            "is_reusable":true
+          }
+        }
+      };
+
+    let request_body = {
+        "recipient": {
+            "id": sender_psid
+        },
+        "message": response
+    }
+
+    // Send the HTTP request to the Messenger Platform
+    request({
+        "uri": "https://graph.facebook.com/v2.6/me/messages",
+        "qs": { "access_token": PAGE_ACCESS_TOKEN },
+        "method": "POST",
+        "json": request_body
+    }, (err, res, body) => {
+        if (!err) {
+            console.log('message sent!')
+        } else {
+            console.error("Unable to send message:" + err);
+        }
+    });
+}
+
 module.exports = {
-    handleGetStarted: handleGetStarted
+    handleGetStarted: handleGetStarted,
+    handleGuideline: handleGuideline,
     
 }
