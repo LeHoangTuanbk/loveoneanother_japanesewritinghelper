@@ -129,6 +129,7 @@ async function handlePostback(sender_psid, received_postback) {
         case "yes":
             response = { "text": "Thanks!" };
             break;
+            
         case "no":
             response = { "text": "Oops, try sending another image." };
             break;
@@ -137,6 +138,7 @@ async function handlePostback(sender_psid, received_postback) {
             await chatbotService.handleGetStarted(sender_psid);
             response = { "text": "You requested restart conversation!"};
             break;
+
         case "GET_STARTED":
             await chatbotService.handleGetStarted(sender_psid);
             response = { "text": "Hello! What can I help you with today?" };
@@ -177,8 +179,6 @@ function callSendAPI(sender_psid, response) {
             console.error("Unable to send message:" + err);
         }
     });
-
-
 }
 
 let setupProfile = async (req, res) => {

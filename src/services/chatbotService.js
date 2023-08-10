@@ -90,9 +90,11 @@ const getStartTemplateVariable = {
                 "image_url": ATTACHMENT_URL,
                 "buttons": [
                     {
-                        "type": "postback",
+                        "type": "web_url",
+                        "url": `${process.env.WEB_VIEW_REQUEST}`,
                         "title": "Open webview!",
-                        "payload": "OPEN_WEBVIEW",
+                        "webview_height_ratio": "full",
+                        "messenger_extensions": true,
                     },
                     {
                         "type": "postback",
