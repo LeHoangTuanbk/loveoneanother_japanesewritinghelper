@@ -93,7 +93,7 @@ const getStartTemplateVariable = {
                         "type": "web_url",
                         "url": `${process.env.WEB_VIEW_REQUEST}`,
                         "title": "Open webview!",
-                        "webview_height_ratio": "full",
+                        "webview_height_ratio": "tall",
                         "messenger_extensions": true,
                     },
                     {
