@@ -253,10 +253,15 @@ let setupPersistentMenu = async (req, res) => {
     res.send("Set up user persistent menu sucessfully!");
 };
 
+let handleRequestForm = (req, res) => {
+    return res.render("requestForm.ejs");
+}
+
 module.exports = {
     setupProfile: setupProfile,
     getHomePage: getHomePage,
     postWebhook: postWebhook,
     getWebhook: getWebhook,
     setupPersistentMenu: setupPersistentMenu,
+    handleRequestForm: handleRequestForm,
 }

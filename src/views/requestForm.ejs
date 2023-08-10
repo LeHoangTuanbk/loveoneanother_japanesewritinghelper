@@ -1,0 +1,65 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Requests</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="container fix-height">
+            <div class="row">
+                <div class="col-12">
+                    <div class="text-center mt-3">
+                        <span class="title">Request</span>
+                    </div>
+                    <input type="text" id="psid" hidden>
+                    <div class="form-group">
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Choose a options (<span style="color: red">*</span>):
+                            <span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                              <li><a href="#">HTML</a></li>
+                              <li><a href="#">CSS</a></li>
+                              <li><a href="#">JavaScript</a></li>
+                            </ul>
+                          </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="textArea">Enter input text (<span style="color: red">*</span>):</label>
+                        <textarea class="form-control" rows="10", id="textArea"></textarea>
+                        <div class="invalid-feedback">Please input text.</div>
+                    </div>
+                    <button class="btn btn-primary" id="Submit"> Submit</button>
+                </div>
+
+            </div>
+
+        </div>
+        <footer>
+            <div class="text-center">
+                <div class="">
+                    <span class="ml-3">
+                        &copy;
+                        Created by <a href="https://www.facebook.com/lehoang.tuanbk"
+                             target="_blank">TuanLH</a>
+                    </span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+</body>
+
+</html>

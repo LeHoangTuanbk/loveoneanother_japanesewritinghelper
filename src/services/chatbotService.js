@@ -185,7 +185,7 @@ let handleGuideline = (sender_psid) => {
     })
 };
 
-const CUTE_KITTY_IMAGE = "https://i.natgeofe.com/k/ad9b542e-c4a0-4d0b-9147-da17121b4c98/MOmeow1_4x3.png";
+const CUTE_KITTY_IMAGE = "https://media.tenor.com/6BDywNN7_NgAAAAd/dog-doggo.gif";
 let sendAnImage = (sender_psid) => {
     let response = {
         "attachment":{
