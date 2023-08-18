@@ -113,7 +113,7 @@ function handleMessage(sender_psid, received_message) {
     }
 
     // Send the response message
-    callSendAPI(sender_psid, response);
+    chatbotService.callSendAPI(sender_psid, response);
 
 }
 
@@ -135,13 +135,17 @@ async function handlePostback(sender_psid, received_postback) {
             break;
 
         case "RESTART_CONVERSATION":
-            await chatbotService.handleGetStarted(sender_psid);
-            response = { "text": "You requested restart conversation!"};
+            setTimeout(chatbotService.getStartedQuickReplyTemplate,500,sender_psid);
+            response = { "text": "You requested restart conversation!" };
             break;
 
         case "GET_STARTED":
-            await chatbotService.handleGetStarted(sender_psid);
+            setTimeout(chatbotService.getStartedQuickReplyTemplate,500,sender_psid);
             response = { "text": "Hello! What can I help you with today?" };
+            // callSendAPI(sender_psid, response);
+            // await chatbotService.getStartedQuickReplyTemplate(sender_psid);
+
+
             break;
 
         case "GUIDELINE":
@@ -152,12 +156,12 @@ async function handlePostback(sender_psid, received_postback) {
     }
 
     // Send the message to acknowledge the postback
-    callSendAPI(sender_psid, response);
+    chatbotService.callSendAPI(sender_psid, response);
 
 }
 
 // Sends response messages via the Send API
-function callSendAPI(sender_psid, response) {
+async function callSendAPI(sender_psid, response) {
     // Construct the message body
     let request_body = {
         "recipient": {
@@ -167,7 +171,7 @@ function callSendAPI(sender_psid, response) {
     }
 
     // Send the HTTP request to the Messenger Platform
-    request({
+    await request({
         "uri": "https://graph.facebook.com/v2.6/me/messages",
         "qs": { "access_token": PAGE_ACCESS_TOKEN },
         "method": "POST",
@@ -256,7 +260,7 @@ let setupPersistentMenu = async (req, res) => {
 let handleRequestForm = (req, res) => {
     let senderID = req.params.senderID;
     let facebookAppId = process.env.facebookAppId;
-    return res.render("requestForm.ejs",{
+    return res.render("requestForm.ejs", {
         senderID: senderID,
         facebookAppId: facebookAppId,
     });
@@ -281,14 +285,14 @@ let handleRequestFormData = async (req, res) => {
         // let response2 = templateMessage.setInfoOrderTemplate();
         //Need to refactor in the future abot send message. 
 
-        await callSendAPI(req.body.psid, response1);
+        await chatbotService.callSendAPI(req.body.psid, response1);
         // await chatbotService.sendMessage(req.body.psid, response2);
 
         return res.status(200).json({
             message: "ok"
         });
     } catch (e) {
-        return res.status(500).json({message: "Internal server"});
+        return res.status(500).json({ message: "Internal server" });
     }
 }
 

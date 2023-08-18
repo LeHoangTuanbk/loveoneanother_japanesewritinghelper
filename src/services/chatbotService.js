@@ -3,29 +3,40 @@ require('dotenv').config();
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN
 
-function callSendAPI(sender_psid, response) {
-    // Construct the message body
-    let request_body = {
-        "recipient": {
-            "id": sender_psid
-        },
-        "message": response
-    }
+async function callSendAPI(sender_psid, response) {
+    return new Promise(async (resolve, reject) => {
+        // Construct the message body
+        try {
+            let request_body = {
+                "recipient": {
+                    "id": sender_psid
+                },
+                "message": response
+            }
+            await markSeen(sender_psid);
+            await sendTypingOn(sender_psid);
 
-    // Send the HTTP request to the Messenger Platform
-    request({
-        "uri": "https://graph.facebook.com/v2.6/me/messages",
-        "qs": { "access_token": PAGE_ACCESS_TOKEN },
-        "method": "POST",
-        "json": request_body
-    }, (err, res, body) => {
+            // Send the HTTP request to the Messenger Platform
+            await request({
+                "uri": "https://graph.facebook.com/v2.6/me/messages",
+                "qs": { "access_token": PAGE_ACCESS_TOKEN },
+                "method": "POST",
+                "json": request_body
+            }, (err, res, body) => {
 
-        if (!err) {
-            console.log('message sent!')
-        } else {
-            console.error("Unable to send message:" + err);
+                if (!err) {
+                    resolve('message sent!')
+                } else {
+                    console.error("Unable to send message:" + err);
+                }
+            });
+
         }
-    });
+        catch (e) {
+            reject(e);
+        }
+    })
+
 }
 
 function sendTypingOn(sender_psid) {
@@ -136,45 +147,45 @@ let handleGetStarted = (sender_psid) => {
 
 
 
-let getStartedTemplate = () => {
-    let response = {
-        "attachment": {
-            "type": "template",
-            "payload": {
-                "template_type": "generic",
-                "elements": [{
-                    "title": "Test template",
-                    "subtitle": "Choose a option that I can help you.",
-                    "image_url": ATTACHMENT_URL,
-                    "buttons": [
-                        {
-                            "type": "postback",
-                            "title": "Explain a grammar!",
-                            "payload": "EXPLAIN_GRAMMAR",
-                        },
-                        {
-                            "type": "postback",
-                            "title": "Correct mistakes!",
-                            "payload": "CORRECT_MISTAKES",
-                        },
-                        {
-                            "type": "postback",
-                            "title": "Change tone to polite!",
-                            "payload": "CHANGE_TO_POLITE_TONE",
-                        },
-                        {
-                            "type": "postback",
-                            "title": "Guiline!",
-                            "payload": "GUIDLINE",
-                        }
-                    ],
-                }]
-            }
-        }
-    }
+// let getStartedTemplate = () => {
+//     let response = {
+//         "attachment": {
+//             "type": "template",
+//             "payload": {
+//                 "template_type": "generic",
+//                 "elements": [{
+//                     "title": "Test template",
+//                     "subtitle": "Choose a option that I can help you.",
+//                     "image_url": ATTACHMENT_URL,
+//                     "buttons": [
+//                         {
+//                             "type": "postback",
+//                             "title": "Explain a grammar!",
+//                             "payload": "EXPLAIN_GRAMMAR",
+//                         },
+//                         {
+//                             "type": "postback",
+//                             "title": "Correct mistakes!",
+//                             "payload": "CORRECT_MISTAKES",
+//                         },
+//                         {
+//                             "type": "postback",
+//                             "title": "Change tone to polite!",
+//                             "payload": "CHANGE_TO_POLITE_TONE",
+//                         },
+//                         {
+//                             "type": "postback",
+//                             "title": "Guiline!",
+//                             "payload": "GUIDLINE",
+//                         }
+//                     ],
+//                 }]
+//             }
+//         }
+//     }
 
-    return response;
-}
+//     return response;
+// }
 
 let handleGuideline = (sender_psid) => {
     return new Promise(async (resolve, reject) => {
@@ -225,8 +236,35 @@ let sendAnImage = (sender_psid) => {
     });
 }
 
+let getStartedQuickReplyTemplate = (sender_psid) => {
+    let response = {
+        "text": "Choose an option!",
+        "quick_replies": [
+            {
+                "content_type": "text",
+                "title": "1",
+                "payload": "EXPLAIN_GRAMMAR",
+            }, {
+                "content_type": "text",
+                "title": "2",
+                "payload": "MAKE_IT_POLITE",
+            }, {
+                "content_type": "text",
+                "title": "3",
+                "payload": "MAKE_IT_CASUAL",
+            }, {
+                "content_type": "text",
+                "title": "4",
+                "payload": "MAKE_IT_SUPER_POLITE",
+            }
+        ]
+    }
+    callSendAPI(sender_psid, response);
+}
+
 module.exports = {
     handleGetStarted: handleGetStarted,
     handleGuideline: handleGuideline,
-
+    getStartedQuickReplyTemplate: getStartedQuickReplyTemplate,
+    callSendAPI: callSendAPI,
 }
