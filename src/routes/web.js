@@ -13,6 +13,7 @@ let initWebRoutes = (app) => {
     router.post("/setup-persistent-menu",HomeController.setupPersistentMenu);
     router.get("/request-form/:senderID",HomeController.handleRequestForm);
     router.post("/handle-request-form",HomeController.handleRequestFormData)
+    router.get("/testdb",HomeController.testDB);
     return app.use('/', router);
 }
 

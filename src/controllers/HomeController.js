@@ -314,6 +314,11 @@ let handleRequestFormData = async (req, res) => {
         return res.status(500).json({ message: "Internal server" });
     }
 }
+import db from '../models/index';
+const testDB = async (req, res) => {
+    let data = await db.User.findAll();
+    return res.send(data);
+}
 
 module.exports = {
     setupProfile: setupProfile,
@@ -323,5 +328,6 @@ module.exports = {
     setupPersistentMenu: setupPersistentMenu,
     handleRequestForm: handleRequestForm,
     handleRequestFormData: handleRequestFormData,
+    testDB: testDB,
 
 }
