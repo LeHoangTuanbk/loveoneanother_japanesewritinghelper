@@ -76,8 +76,7 @@ function handleMessage(sender_psid, received_message) {
     let response;
 
     // Checks if the message contains text
-    if(received_message.quick_reply && received_message.quick_reply.payload)
-    {
+    if (received_message.quick_reply && received_message.quick_reply.payload) {
         switch (received_message.quick_reply.payload) {
             case "MAKE_IT_POLITE":
             case "EXPLAIN_GRAMMAR":
@@ -138,44 +137,38 @@ function handleMessage(sender_psid, received_message) {
 
 // Handles messaging_postbacks events
 async function handlePostback(sender_psid, received_postback) {
-    let response;
-
     // Get the payload for the postback
     let payload = received_postback.payload;
 
     // Set the response based on the postback payload
     switch (payload) {
-        case "yes":
-            response = { "text": "Thanks!" };
-            break;
-
-        case "no":
-            response = { "text": "Oops, try sending another image." };
-            break;
-
         case "RESTART_CONVERSATION":
-            setTimeout(chatbotService.getStartedQuickReplyTemplate,500,sender_psid);
-            response = { "text": "You requested restart conversation!" };
+            await chatbotService.handleRestartConversation(sender_psid);
             break;
 
         case "GET_STARTED":
-            setTimeout(chatbotService.getStartedQuickReplyTemplate,500,sender_psid);
-            response = { "text": "Hello! What can I help you with today?" };
-            // callSendAPI(sender_psid, response);
-            // await chatbotService.getStartedQuickReplyTemplate(sender_psid);
-
-
+            await chatbotService.handleGetStarted(sender_psid);
             break;
 
-        case "GUIDELINE":
+        case "GUIDELINES":
             await chatbotService.handleGuideline(sender_psid);
             break;
+
+        case "EXPLAIN_GRAMMAR":
+        //
+        case "REWRITE_CORRECT_GRAMMAR":
+        //
+
+        case "CHANGE_TO_CASUAL":
+
+        case "CHANGE_TO_POLITE":
+        case "CHANGE_TO_POLITE":
+
         default:
-            response = { "text": `Oops! I don't know how to response with ${payload}. Please try another action!` };
+            await chatbotService.handleOthers(sender_psid, payload);
     }
 
     // Send the message to acknowledge the postback
-    chatbotService.callSendAPI(sender_psid, response);
 
 }
 
