@@ -12,10 +12,10 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
-    return queryInterface.bulkInsert('Users', [{
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'example@example.com',
+    return queryInterface.bulkInsert('ResponseStatuses', [{
+      psid: 'FakePSID05',
+      payload: 'HANDLE_POSTBACK',
+      responded: false,
       createdAt: new Date(),
       updatedAt: new Date()
     }]);
@@ -28,6 +28,6 @@ module.exports = {
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
-    return queryInterface.bulkDelete('Users', null, {});
+    return queryInterface.bulkDelete('ResponseStatuses', null, {});
   }
 };

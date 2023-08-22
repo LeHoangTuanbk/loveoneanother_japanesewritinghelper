@@ -146,47 +146,6 @@ let handleGetStarted = (sender_psid) => {
 };
 
 
-
-// let getStartedTemplate = () => {
-//     let response = {
-//         "attachment": {
-//             "type": "template",
-//             "payload": {
-//                 "template_type": "generic",
-//                 "elements": [{
-//                     "title": "Test template",
-//                     "subtitle": "Choose a option that I can help you.",
-//                     "image_url": ATTACHMENT_URL,
-//                     "buttons": [
-//                         {
-//                             "type": "postback",
-//                             "title": "Explain a grammar!",
-//                             "payload": "EXPLAIN_GRAMMAR",
-//                         },
-//                         {
-//                             "type": "postback",
-//                             "title": "Correct mistakes!",
-//                             "payload": "CORRECT_MISTAKES",
-//                         },
-//                         {
-//                             "type": "postback",
-//                             "title": "Change tone to polite!",
-//                             "payload": "CHANGE_TO_POLITE_TONE",
-//                         },
-//                         {
-//                             "type": "postback",
-//                             "title": "Guiline!",
-//                             "payload": "GUIDLINE",
-//                         }
-//                     ],
-//                 }]
-//             }
-//         }
-//     }
-
-//     return response;
-// }
-
 let handleGuideline = (sender_psid) => {
     return new Promise(async (resolve, reject) => {
         try {

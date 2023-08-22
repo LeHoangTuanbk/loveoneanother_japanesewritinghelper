@@ -244,12 +244,17 @@ let setupPersistentMenu = async (req, res) => {
                 "call_to_actions": [
                     {
                         "type": "postback",
-                        "title": "Restart conversation.",
+                        "title": "Restart the conversation",
                         "payload": "RESTART_CONVERSATION"
                     },
                     {
+                        "type": "postback",
+                        "title": "Show guidelines",
+                        "payload": "GUIDELINES"
+                    },
+                    {
                         "type": "web_url",
-                        "title": "Report bugs",
+                        "title": "Report bugs to developer",
                         "url": "https://www.facebook.com/lehoang.tuanbk",
                         "webview_height_ratio": "full"
                     }
@@ -316,7 +321,7 @@ let handleRequestFormData = async (req, res) => {
 }
 import db from '../models/index';
 const testDB = async (req, res) => {
-    let data = await db.User.findAll();
+    let data = await db.ResponseStatus.findAll();
     return res.send(data);
 }
 
