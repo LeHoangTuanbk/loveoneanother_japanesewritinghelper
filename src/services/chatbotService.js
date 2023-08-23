@@ -1,5 +1,6 @@
 import request from "request";
 require('dotenv').config();
+import db from '../models/index';
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN
 
@@ -16,7 +17,7 @@ async function callSendAPI(sender_psid, response) {
                 },
                 "message": response
             }
-            
+
             // Send the HTTP request to the Messenger Platform
             await request({
                 "uri": "https://graph.facebook.com/v2.6/me/messages",
@@ -123,33 +124,18 @@ function markSeen(sender_psid) {
 //     return res;
 // }
 
+let sendHelloResponse = async (sender_psid) => {
+    let helloResponse = { "text": "Hello! What can I assist you with today?" };
+    await callSendAPI(sender_psid, helloResponse);
+}
+
 let handleGetStarted = (sender_psid) => {
     return new Promise(async (resolve, reject) => {
         try {
-            //Sender action
-            // await markSeen(sender_psid);
-            // await sendTypingOn(sender_psid);
             //Send hello message
-            let helloResponse = { "text": "Hello! What can I assist you with today?" };
-            await callSendAPI(sender_psid, helloResponse);
-
+            await sendHelloResponse(sender_psid);
             //Send options
-            let options = {"text":
-`Here are some options that I can assist you with.
-
-1. Explain a Japanese grammar. 
-2. Rewrite the paragaph with correct grammar. 
-3. Change to a casual tone. 
-4. Change to a polite tone.
-5. Change to a super polite tone. 
-                `
-            }
-
-            await callSendAPI(sender_psid, options)
-
-            //Send quick replies
-            await sendGetStartedQuickReplyTemplate(sender_psid)
-            
+            await sendMainOptions(sender_psid);
             //Send resolve
             resolve('done');
         } catch (e) {
@@ -158,7 +144,27 @@ let handleGetStarted = (sender_psid) => {
     })
 };
 
-let sendGetStartedQuickReplyTemplate = (sender_psid) => {
+let sendMainOptions = async (sender_psid) => {
+    let options = {
+        "text":
+            `Here are some options that I can assist you with.
+
+1. Explain a Japanese grammar. 
+2. Rewrite the paragaph with correct grammar. 
+3. Change to a casual tone. 
+4. Change to a polite tone.
+5. Change to a super polite tone. 
+        `
+    }
+
+    await callSendAPI(sender_psid, options)
+
+    //Send quick replies
+    await sendGetStartedQuickReplyTemplate(sender_psid)
+
+}
+
+let sendGetStartedQuickReplyTemplate = async (sender_psid) => {
     let response = {
         "text": "Now, choose one!",
         "quick_replies": [
@@ -186,7 +192,7 @@ let sendGetStartedQuickReplyTemplate = (sender_psid) => {
             }
         ]
     }
-    callSendAPI(sender_psid, response);
+    await callSendAPI(sender_psid, response);
 }
 
 let handleRestartConversation = async (sender_psid) => {
@@ -200,7 +206,7 @@ let handleGuideline = (sender_psid) => {
         try {
             //Send text responese
             let guidelineResponse = {
-                "text":"This feature will be implemented in the future!\nPlease restart the conversation to continue!"
+                "text": "This feature will be implemented in the future!\nPlease restart the conversation to continue!"
             }
             // await sendAnImage(sender_psid);
             await callSendAPI(sender_psid, guidelineResponse);
@@ -214,8 +220,153 @@ let handleGuideline = (sender_psid) => {
 const handleOthers = async (sender_psid, payload) => {
     let unknownResponse = { "text": `Oops! I don't know how to response with ${payload}. Please try another action!` };
     await callSendAPI(sender_psid, unknownResponse);
-    
 }
+
+const handleRequest = async (sender_psid, payload) => {
+    //Set responded status in database.
+    //If psid doen't exist in db, add new record
+    //Otherwise, just update the payload, responded.
+    let responseStatus = await db.ResponseStatus.findOne({
+        where: {
+            psid: sender_psid
+        }
+    })
+
+    try {
+        if (responseStatus === null) {
+            let newResponseStatus = {
+                psid: sender_psid,
+                payload: payload,
+                responded: false,
+            }
+            await db.ResponseStatus.create(newResponseStatus);
+        }
+        else {
+            await db.ResponseStatus.update({
+                payload: payload,
+                responded: false,
+            }, {
+                where: {
+                    psid: sender_psid
+                }
+            })
+        }
+    }
+    catch (error) {
+
+    }
+    finally {
+
+    }
+    //Send notification
+    let noficationResponse;
+
+    switch(payload){
+        case "EXPLAIN_GRAMMAR":
+            noficationResponse = {
+                "text": `You requested to explain a Japanese grammar!\n`+
+                `Now! Send me the grammar that you would like me to explain. `
+            };
+            break;
+        case "REWRITE_CORRECT_GRAMMAR":
+            noficationResponse = {
+                "text": `You requested to rewrite paragraph with correct grammar!\n` +
+                `Now! Send me the paragraph that you would like me to correct. `
+            };
+            break;
+        case "CHANGE_TO_CASUAL":
+            noficationResponse = {
+                "text": `You requested to change the paragraph's tone to casual!\n`+
+                `Now! Send me the paragraph that you would like me to change.  `
+            };
+            break;
+        case "CHANGE_TO_POLITE":
+            noficationResponse = {
+                "text": `You requested to change the paragraph's tone to polite!\n`+
+                `Now! Send me the paragraph that you would like me to change.  `
+            };
+            break;
+        case "CHANGE_TO_SUPER_POLITE":
+            noficationResponse = {
+                "text": `You requested to change the paragraph's tone to super polite!\n`+
+                `Now! Send me the paragraph that you would like me to change.  `
+            };
+            break;
+        default:
+    }
+
+    await callSendAPI(sender_psid, noficationResponse);
+    //Will wait for user's text message and handle text messages.
+    //And process in the next function 
+
+};
+
+const handleRewriteCorrectGrammar = (sender_psid, payload) => {
+
+}
+
+const sendComeBackMainOption = async (sender_psid) => {
+    let response = {
+        "text": "Tap to comeback to main options!",
+        "quick_replies": [
+            {
+                "content_type": "text",
+                "title": "Main options",
+                "payload": "MAIN_OPTIONS",
+            }
+        ]
+    }
+    await callSendAPI(sender_psid, response);
+}
+
+const handleFreeText = async (sender_psid, freeText) => {
+    //Check responded status. If responseStatus === null, haven't register infor or responded = true
+    //Not response in this case. Only send response if not responded. 
+    try {
+        let responseStatus = await db.ResponseStatus.findOne({
+            where: {
+                psid: sender_psid
+            }
+        })
+
+        if (responseStatus === null || responseStatus.responded === true) {
+            let response = {
+                "text": `Currently bot can not handle freetext like ${freeText}.Please restart bot, and try to follow bot's instructions.`
+            }
+            await callSendAPI(sender_psid, response);
+        }
+        else {
+            //Call openAI api here to solve. 
+            let grammarExplainationResponse = {
+                "text": `Here is the explaination of ${freeText}.Blabla...`
+            }
+            await callSendAPI(sender_psid, grammarExplainationResponse);
+            //Update responded === true
+
+            // responseStatus.responded = true;
+
+            await db.ResponseStatus.update({
+                responded: true
+            }, {
+                where: {
+                    psid: sender_psid
+                }
+            });
+
+            //Need to send do you want to continue using
+            //Lazy handling. Just give quickreply to comeback main options. 
+            await sendComeBackMainOption(sender_psid);
+            // let followupResponse = {
+            //     "text": `Would you like to continue?`
+            // }
+            // await callSendAPI(sender_psid, followupResponse);
+        }
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
 const CUTE_KITTY_IMAGE = "https://media.tenor.com/6BDywNN7_NgAAAAd/dog-doggo.gif";
 let sendAnImage = (sender_psid) => {
     let response = {
@@ -255,4 +406,9 @@ module.exports = {
     handleRestartConversation: handleRestartConversation,
     handleGuideline: handleGuideline,
     handleOthers: handleOthers,
+    handleRequest: handleRequest,
+    handleRewriteCorrectGrammar: handleRewriteCorrectGrammar,
+    handleFreeText: handleFreeText,
+    sendMainOptions: sendMainOptions
+
 }

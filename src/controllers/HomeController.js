@@ -35,8 +35,6 @@ let postWebhook = (req, res) => {
             } else if (webhook_event.postback) {
                 handlePostback(sender_psid, webhook_event.postback);
             }
-
-
         });
 
         // Return a '200 OK' response to all events
@@ -72,34 +70,39 @@ let getWebhook = (req, res) => {
 }
 
 // Handles messages events
-function handleMessage(sender_psid, received_message) {
-    let response;
+async function handleMessage(sender_psid, received_message) {
+    // let response;
 
     // Checks if the message contains text
     if (received_message.quick_reply && received_message.quick_reply.payload) {
-        switch (received_message.quick_reply.payload) {
-            case "MAKE_IT_POLITE":
+        let payload = received_message.quick_reply.payload
+        switch (payload) {
             case "EXPLAIN_GRAMMAR":
-                response = {
-                    "text": `You sent the payload: "${received_message.quick_reply.payload}".`
-                }
-                // chatbotService.callSendAPI(response);
+            case "REWRITE_CORRECT_GRAMMAR":
+            case "CHANGE_TO_CASUAL":
+            case "CHANGE_TO_POLITE":
+            case "CHANGE_TO_SUPER_POLITE":
+                await chatbotService.handleRequest(sender_psid, payload);
+                break;
+            
+            case "MAIN_OPTIONS":
+                await chatbotService.sendMainOptions(sender_psid);
                 break;
 
             default:
+                //Will implement later. 
                 response = {
                     "text": `You sent the payload: nothing".`
                 }
+
         }
-        chatbotService.callSendAPI(sender_psid, response);
         return;
     }
     if (received_message.text) {
         // Create the payload for a basic text message, which
         // will be added to the body of our request to the Send API
-        response = {
-            "text": `You sent the message: "${received_message.text}". Now send me an attachment!`
-        }
+        await chatbotService.handleFreeText(sender_psid,received_message.text);
+
     } else if (received_message.attachments) {
         // Get the URL of the message attachment
         let attachment_url = received_message.attachments[0].payload.url;
@@ -131,7 +134,7 @@ function handleMessage(sender_psid, received_message) {
     }
 
     // Send the response message
-    chatbotService.callSendAPI(sender_psid, response);
+    // chatbotService.callSendAPI(sender_psid, response);
 
 }
 
@@ -154,16 +157,6 @@ async function handlePostback(sender_psid, received_postback) {
             await chatbotService.handleGuideline(sender_psid);
             break;
 
-        case "EXPLAIN_GRAMMAR":
-        //
-        case "REWRITE_CORRECT_GRAMMAR":
-        //
-
-        case "CHANGE_TO_CASUAL":
-
-        case "CHANGE_TO_POLITE":
-        case "CHANGE_TO_POLITE":
-
         default:
             await chatbotService.handleOthers(sender_psid, payload);
     }
@@ -173,29 +166,29 @@ async function handlePostback(sender_psid, received_postback) {
 }
 
 // Sends response messages via the Send API
-async function callSendAPI(sender_psid, response) {
-    // Construct the message body
-    let request_body = {
-        "recipient": {
-            "id": sender_psid
-        },
-        "message": response
-    }
+// async function callSendAPI(sender_psid, response) {
+//     // Construct the message body
+//     let request_body = {
+//         "recipient": {
+//             "id": sender_psid
+//         },
+//         "message": response
+//     }
 
-    // Send the HTTP request to the Messenger Platform
-    await request({
-        "uri": "https://graph.facebook.com/v2.6/me/messages",
-        "qs": { "access_token": PAGE_ACCESS_TOKEN },
-        "method": "POST",
-        "json": request_body
-    }, (err, res, body) => {
-        if (!err) {
-            console.log('message sent!')
-        } else {
-            console.error("Unable to send message:" + err);
-        }
-    });
-}
+//     // Send the HTTP request to the Messenger Platform
+//     await request({
+//         "uri": "https://graph.facebook.com/v2.6/me/messages",
+//         "qs": { "access_token": PAGE_ACCESS_TOKEN },
+//         "method": "POST",
+//         "json": request_body
+//     }, (err, res, body) => {
+//         if (!err) {
+//             console.log('message sent!')
+//         } else {
+//             console.error("Unable to send message:" + err);
+//         }
+//     });
+// }
 
 let setupProfile = async (req, res) => {
     //Call Facebook profile api
