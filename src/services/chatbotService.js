@@ -1,6 +1,7 @@
 import request from "request";
 require('dotenv').config();
 import db from '../models/index';
+import openaiAPIService from "./openaiAPIService";
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN
 
@@ -91,39 +92,6 @@ function markSeen(sender_psid) {
     });
 }
 
-// const ATTACHMENT_URL = "https://www.in.nesinc.com/Content/STUDYGUIDE/images/questions/057_03.png"
-// const getStartTemplateVariable = (sender_psid) => {
-//     let res = {
-//         "attachment": {
-//             "type": "template",
-//             "payload": {
-//                 "template_type": "generic",
-//                 "elements": [{
-//                     "title": "Test",
-//                     "subtitle": "Tap a button.",
-//                     "image_url": ATTACHMENT_URL,
-//                     "buttons": [
-//                         {
-//                             "type": "web_url",
-//                             "url": `${process.env.WEB_VIEW_REQUEST}/${sender_psid}`,
-//                             "title": "Open webview!",
-//                             "webview_height_ratio": "tall",
-//                             "messenger_extensions": true,
-//                         },
-//                         {
-//                             "type": "postback",
-//                             "title": "Guideline!",
-//                             "payload": "GUIDELINE",
-//                         }
-//                     ],
-//                 }]
-//             }
-//         }
-//     }
-
-//     return res;
-// }
-
 let sendHelloResponse = async (sender_psid) => {
     let helloResponse = { "text": "Hello! What can I assist you with today?" };
     await callSendAPI(sender_psid, helloResponse);
@@ -161,7 +129,6 @@ let sendMainOptions = async (sender_psid) => {
 
     //Send quick replies
     await sendGetStartedQuickReplyTemplate(sender_psid)
-
 }
 
 let sendGetStartedQuickReplyTemplate = async (sender_psid) => {
@@ -298,12 +265,7 @@ const handleRequest = async (sender_psid, payload) => {
     await callSendAPI(sender_psid, noficationResponse);
     //Will wait for user's text message and handle text messages.
     //And process in the next function 
-
 };
-
-const handleRewriteCorrectGrammar = (sender_psid, payload) => {
-
-}
 
 const sendComeBackMainOption = async (sender_psid) => {
     let response = {
@@ -337,13 +299,29 @@ const handleFreeText = async (sender_psid, freeText) => {
         }
         else {
             //Call openAI api here to solve. 
-            let grammarExplainationResponse = {
-                "text": `Here is the explaination of ${freeText}.Blabla...`
+            let payload = responseStatus.payload;
+            let requestResponse;
+            switch (payload) {
+                case "EXPLAIN_GRAMMAR":
+                    requestResponse = await openaiAPIService.handleExplainGrammar(freeText);
+                    break;
+                case "REWRITE_CORRECT_GRAMMAR":
+                    requestResponse = await openaiAPIService.handleRewriteCorrectGrammar(freeText);
+                    break;
+                case "CHANGE_TO_CASUAL":
+                    requestResponse = await openaiAPIService.handleChangeToCasual(freeText);
+                    break;
+                case "CHANGE_TO_POLITE":
+                    requestResponse = await openaiAPIService.handleChangeToPolite(freeText);
+                    break;
+                case "CHANGE_TO_SUPER_POLITE":
+                    requestResponse = await openaiAPIService.handleChangeToSuperPolite(freeText);
+                    break;
+                default:
+                    //Will be implemented later. 
             }
-            await callSendAPI(sender_psid, grammarExplainationResponse);
-            //Update responded === true
-
-            // responseStatus.responded = true;
+            
+            await callSendAPI(sender_psid, requestResponse);
 
             await db.ResponseStatus.update({
                 responded: true
@@ -356,49 +334,11 @@ const handleFreeText = async (sender_psid, freeText) => {
             //Need to send do you want to continue using
             //Lazy handling. Just give quickreply to comeback main options. 
             await sendComeBackMainOption(sender_psid);
-            // let followupResponse = {
-            //     "text": `Would you like to continue?`
-            // }
-            // await callSendAPI(sender_psid, followupResponse);
         }
     }
     catch (error) {
         console.log(error);
     }
-}
-
-const CUTE_KITTY_IMAGE = "https://media.tenor.com/6BDywNN7_NgAAAAd/dog-doggo.gif";
-let sendAnImage = (sender_psid) => {
-    let response = {
-        "attachment": {
-            "type": "image",
-            "payload": {
-                "url": CUTE_KITTY_IMAGE,
-                "is_reusable": true
-            }
-        }
-    };
-
-    let request_body = {
-        "recipient": {
-            "id": sender_psid
-        },
-        "message": response
-    }
-
-    // Send the HTTP request to the Messenger Platform
-    request({
-        "uri": "https://graph.facebook.com/v2.6/me/messages",
-        "qs": { "access_token": PAGE_ACCESS_TOKEN },
-        "method": "POST",
-        "json": request_body
-    }, (err, res, body) => {
-        if (!err) {
-            console.log('message sent!')
-        } else {
-            console.error("Unable to send message:" + err);
-        }
-    });
 }
 
 module.exports = {
@@ -407,8 +347,6 @@ module.exports = {
     handleGuideline: handleGuideline,
     handleOthers: handleOthers,
     handleRequest: handleRequest,
-    handleRewriteCorrectGrammar: handleRewriteCorrectGrammar,
     handleFreeText: handleFreeText,
     sendMainOptions: sendMainOptions
-
 }

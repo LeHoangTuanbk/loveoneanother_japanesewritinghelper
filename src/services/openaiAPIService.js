@@ -1,21 +1,36 @@
-const handleExplainGrammar = () => {
-
+const handleExplainGrammar = (freeText) => {
+    let responseFromOpenAI = {
+        "text": `Explain grammar ${freeText}`
+    };
+    return responseFromOpenAI;
 }
 
-const handleRewriteCorrectGrammar = () => {
-
+const handleRewriteCorrectGrammar = (freeText) => {
+    let responseFromOpenAI = {
+        "text": `Correct grammar ${freeText}`
+    };
+    return responseFromOpenAI;
 }
 
-const handleChangeToCasual = () => {
-
+const handleChangeToCasual = (freeText) => {
+    let responseFromOpenAI = {
+        "text": `Change to casual ${freeText}`
+    };
+    return responseFromOpenAI;
 }
 
-const handleChangeToPolite = () => {
-
+const handleChangeToPolite = (freeText) => {
+    let responseFromOpenAI = {
+        "text": `Change to polite ${freeText}`
+    };
+    return responseFromOpenAI;
 }
 
-const handleChangeToSuperPolite = () => {
-
+const handleChangeToSuperPolite = (freeText) => {
+    let responseFromOpenAI = {
+        "text": `Change to super polite ${freeText}`
+    };
+    return responseFromOpenAI;
 }
 
 module.exports = {
@@ -24,6 +39,5 @@ module.exports = {
     handleChangeToCasual: handleChangeToCasual,
     handleChangeToPolite: handleChangeToPolite,
     handleChangeToSuperPolite: handleChangeToSuperPolite
-
 }
 
