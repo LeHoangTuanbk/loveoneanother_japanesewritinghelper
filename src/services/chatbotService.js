@@ -232,7 +232,8 @@ const handleRequest = async (sender_psid, payload) => {
         case "EXPLAIN_GRAMMAR":
             noficationResponse = {
                 "text": `You requested to explain a Japanese grammar!\n` +
-                    `Now! Send me the grammar that you would like me to explain. `
+                    `Now! Send me the grammar that you would like me to explain.\n `+
+                    `For examle:\nThe Possessive Particle【の】,The Contextual Particle【で】, Past tense【Vた】,... `
             };
             break;
         case "REWRITE_CORRECT_GRAMMAR":
@@ -305,24 +306,52 @@ const handleFreeText = async (sender_psid, freeText) => {
             let responseNotification;
             switch (payload) {
                 case "EXPLAIN_GRAMMAR":
+                    await markSeen(sender_psid);
+                    await sendTypingOn(sender_psid);
                     requestToOpenAI = await openaiAPIService.handleExplainGrammar(freeText);
+                    let grammarMeaning = requestToOpenAI["Meaning"];
+                    let useCases = requestToOpenAI["Usecases"];
+                    let meaningResponseNotification = {
+                        "text": `Thank you for your request. Here is the meaning of ${freeText}:`
+                    };
+                    await callSendAPI(sender_psid, meaningResponseNotification);
+                    let meaningResponse = {
+                        "text": grammarMeaning
+                    }
+                    await callSendAPI(sender_psid, meaningResponse);
+                    let forExampleText = {
+                        "text": "For example"
+                    }
+                    await callSendAPI(sender_psid, forExampleText);
+                    for (const example of useCases){
+                        let exampleReponse = {
+                            "text": example
+                        };
+                        await callSendAPI(sender_psid, exampleReponse);
+                    }
+
                     break;
                 case "REWRITE_CORRECT_GRAMMAR":
+                    await markSeen(sender_psid);
+                    await sendTypingOn(sender_psid);
                     let responseFromOpenAI = await openaiAPIService.handleRewriteCorrectGrammar(freeText);
-                    if (responseFromOpenAI === "NO_GRAMMARICAL_MISTAKES_FOUND"){
+                    if (responseFromOpenAI === "NO_GRAMMATICAL_MISTAKES_FOUND") {
                         requestToOpenAI = {
                             "text": "Your Japanese writing is impeccable. I couldn't find any grammatical errors or misspellings."
                         }
+                        await callSendAPI(sender_psid, requestToOpenAI);
+                        break;
                     }
                     else {
                         requestToOpenAI = {
                             "text": responseFromOpenAI
                         }
                     }
+
                     responseNotification = {
                         "text": "Here is the text with correct grammar"
                     }
-                    
+
                     //Send notification message
                     await callSendAPI(sender_psid, responseNotification);
                     await callSendAPI(sender_psid, requestToOpenAI);

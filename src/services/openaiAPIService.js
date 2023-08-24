@@ -24,21 +24,27 @@ const getCompletion = async (prompt, model = "gpt-3.5-turbo", temperature = 0) =
     }
 }
 
-const handleExplainGrammar = (freeText) => {
-    let responseFromOpenAI = {
-        "text": `Explain grammar ${freeText}`
-    };
+const handleExplainGrammar = async (freeText) => {
+    let prompt = `Explain ${freeText}in 150 words for English speakers with limited Japanese knowledge. 
+    Follow the JSON format with 'Meaning' and 'Usecases', using an array for 'Usecases'. Provide JSON text only, nothing else. 
+   `;
+    let responseFromOpenAI = await getCompletion(prompt);
+    responseFromOpenAI = JSON.parse(responseFromOpenAI);
+    console.log(responseFromOpenAI["Meaning"]);
+    console.log(responseFromOpenAI["Usecases"]);
     return responseFromOpenAI;
 }
 
 const handleRewriteCorrectGrammar = async (freeText) => {
     let prompt = `I will give you text content delimited by {}, you will correct the spelling and grammar mistakes of this text. 
     Keep the meaning the same. Make sure the re-written content's number of words is as close to the original text's number of words as possible. Do not alter the original structure and formatting outlined in any way.
-    If the original text has spelling or grammar mistakes, only correct any spelling or grammar mistakes if necessary, and do not make any unnecessary improvements.
-    If the original text has no spelling or grammar mistakes, respond this: "NO_GRAMMARICAL_MISTAKES_FOUND".
+    If the original text has no spelling or grammar mistakes, respond this: "NO_GRAMMATICAL_MISTAKES_FOUND".
+    Else if the original text has spelling or grammar mistakes, only correct any spelling or grammar mistakes if necessary, and do not make any unnecessary improvements.
+
     Now, using the concepts above, fix spelling or grammar mistakes (if any) for the following text. Only give me the output and nothing else. Respond in Japanese:
-    ${freeText}
-    Output: 
+    {${freeText}}
+
+    Your response: 
    `;
     let responseFromOpenAI = await getCompletion(prompt);
     console.log(responseFromOpenAI);
@@ -124,8 +130,9 @@ const handleChangeToSuperPolite = async (freeText) => {
 // handleChangeToPolite("今、時間ある？")
 // let a = handleChangeToSuperPolite("今、時間ある？")
 // console.log(a);
-// let text = `昨日、東京に行きました。そして、お好み焼きを食べました。`;
+// let text = `昨日、東京に行きました。`;
 // handleRewriteCorrectGrammar(text);
+// handleExplainGrammar("the Japanese possessive particle 【の】");
 module.exports = {
     handleExplainGrammar: handleExplainGrammar,
     handleRewriteCorrectGrammar: handleRewriteCorrectGrammar,
