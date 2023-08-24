@@ -4,7 +4,7 @@
   "description": "A webhook to connect to Facebook messenger",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node --exec babel-node ./src/services/openaiAPIService.js",
     "start": "nodemon --exec babel-node src/server.js",
     "clean": "rm -rf build && mkdir build",
     "build-server": "babel -d ./build ./src/server.js -s",
@@ -22,6 +22,7 @@
     "dotenv": "^16.3.1",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
+    "openai": "^4.1.0",
     "pg": "^8.11.3",
     "pg-hstore": "^2.3.4",
     "react-dom": "18.2.0",

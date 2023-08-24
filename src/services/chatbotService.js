@@ -228,38 +228,39 @@ const handleRequest = async (sender_psid, payload) => {
     //Send notification
     let noficationResponse;
 
-    switch(payload){
+    switch (payload) {
         case "EXPLAIN_GRAMMAR":
             noficationResponse = {
-                "text": `You requested to explain a Japanese grammar!\n`+
-                `Now! Send me the grammar that you would like me to explain. `
+                "text": `You requested to explain a Japanese grammar!\n` +
+                    `Now! Send me the grammar that you would like me to explain. `
             };
             break;
         case "REWRITE_CORRECT_GRAMMAR":
             noficationResponse = {
                 "text": `You requested to rewrite paragraph with correct grammar!\n` +
-                `Now! Send me the paragraph that you would like me to correct. `
+                    `Now! Send me the paragraph that you would like me to correct. `
             };
             break;
         case "CHANGE_TO_CASUAL":
             noficationResponse = {
-                "text": `You requested to change the paragraph's tone to casual!\n`+
-                `Now! Send me the paragraph that you would like me to change.  `
+                "text": `You requested to change the paragraph's tone to casual!\n` +
+                    `Now! Send me the paragraph that you would like me to change.  `
             };
             break;
         case "CHANGE_TO_POLITE":
             noficationResponse = {
-                "text": `You requested to change the paragraph's tone to polite!\n`+
-                `Now! Send me the paragraph that you would like me to change.  `
+                "text": `You requested to change the paragraph's tone to polite!\n` +
+                    `Now! Send me the paragraph that you would like me to change.  `
             };
             break;
         case "CHANGE_TO_SUPER_POLITE":
             noficationResponse = {
-                "text": `You requested to change the paragraph's tone to super polite!\n`+
-                `Now! Send me the paragraph that you would like me to change.  `
+                "text": `You requested to change the paragraph's tone to super polite!\n` +
+                    `Now! Send me the paragraph that you would like me to change.  `
             };
             break;
         default:
+            handleOthers(sender_psid, payload);
     }
 
     await callSendAPI(sender_psid, noficationResponse);
@@ -300,28 +301,76 @@ const handleFreeText = async (sender_psid, freeText) => {
         else {
             //Call openAI api here to solve. 
             let payload = responseStatus.payload;
-            let requestResponse;
+            let requestToOpenAI;
+            let responseNotification;
             switch (payload) {
                 case "EXPLAIN_GRAMMAR":
-                    requestResponse = await openaiAPIService.handleExplainGrammar(freeText);
+                    requestToOpenAI = await openaiAPIService.handleExplainGrammar(freeText);
                     break;
                 case "REWRITE_CORRECT_GRAMMAR":
-                    requestResponse = await openaiAPIService.handleRewriteCorrectGrammar(freeText);
+                    let responseFromOpenAI = await openaiAPIService.handleRewriteCorrectGrammar(freeText);
+                    if (responseFromOpenAI === "NO_GRAMMARICAL_MISTAKES_FOUND"){
+                        requestToOpenAI = {
+                            "text": "Your Japanese writing is impeccable. I couldn't find any grammatical errors or misspellings."
+                        }
+                    }
+                    else {
+                        requestToOpenAI = {
+                            "text": responseFromOpenAI
+                        }
+                    }
+                    responseNotification = {
+                        "text": "Here is the text with correct grammar"
+                    }
+                    
+                    //Send notification message
+                    await callSendAPI(sender_psid, responseNotification);
+                    await callSendAPI(sender_psid, requestToOpenAI);
                     break;
                 case "CHANGE_TO_CASUAL":
-                    requestResponse = await openaiAPIService.handleChangeToCasual(freeText);
+                    await markSeen(sender_psid);
+                    await sendTypingOn(sender_psid);
+                    requestToOpenAI = {
+                        "text": await openaiAPIService.handleChangeToCasual(freeText)
+                    }
+                    responseNotification = {
+                        "text": "Here is the text after being changed to casual tone"
+                    }
+                    //Send notification message
+                    await callSendAPI(sender_psid, responseNotification);
+                    //Send results
+                    await callSendAPI(sender_psid, requestToOpenAI);
                     break;
+
                 case "CHANGE_TO_POLITE":
-                    requestResponse = await openaiAPIService.handleChangeToPolite(freeText);
+                    await markSeen(sender_psid);
+                    await sendTypingOn(sender_psid);
+                    requestToOpenAI = {
+                        "text": await openaiAPIService.handleChangeToPolite(freeText)
+                    }
+                    responseNotification = {
+                        "text": "Here is the text after being changed to polite tone"
+                    }
+                    //Send notification message
+                    await callSendAPI(sender_psid, responseNotification);
+                    await callSendAPI(sender_psid, requestToOpenAI);
                     break;
                 case "CHANGE_TO_SUPER_POLITE":
-                    requestResponse = await openaiAPIService.handleChangeToSuperPolite(freeText);
+                    await markSeen(sender_psid);
+                    await sendTypingOn(sender_psid);
+                    requestToOpenAI = {
+                        "text": await openaiAPIService.handleChangeToSuperPolite(freeText)
+                    }
+                    responseNotification = {
+                        "text": "Here is the text after being changed to super polite tone"
+                    }
+                    //Send notification message
+                    await callSendAPI(sender_psid, responseNotification);
+                    await callSendAPI(sender_psid, requestToOpenAI);
                     break;
                 default:
-                    //Will be implemented later. 
+                //Will be implemented later. 
             }
-            
-            await callSendAPI(sender_psid, requestResponse);
 
             await db.ResponseStatus.update({
                 responded: true
