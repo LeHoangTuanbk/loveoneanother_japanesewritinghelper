@@ -78,7 +78,7 @@ async function handleMessage(sender_psid, received_message) {
         let payload = received_message.quick_reply.payload
         switch (payload) {
             case "EXPLAIN_GRAMMAR":
-            case "REWRITE_CORRECT_GRAMMAR":
+            case "REWRITE_NATURAL_TONE":
             case "CHANGE_TO_CASUAL":
             case "CHANGE_TO_POLITE":
             case "CHANGE_TO_SUPER_POLITE":
@@ -91,9 +91,10 @@ async function handleMessage(sender_psid, received_message) {
 
             default:
                 //Will implement later. 
-                response = {
-                    "text": `You sent the payload: nothing".`
-                }
+                // let response = {
+                //     "text": `You sent the payload: nothing".`
+                // }
+                console.log("Can't handle quick replied payload");
 
         }
         return;
@@ -160,35 +161,9 @@ async function handlePostback(sender_psid, received_postback) {
         default:
             await chatbotService.handleOthers(sender_psid, payload);
     }
-
     // Send the message to acknowledge the postback
 
 }
-
-// Sends response messages via the Send API
-// async function callSendAPI(sender_psid, response) {
-//     // Construct the message body
-//     let request_body = {
-//         "recipient": {
-//             "id": sender_psid
-//         },
-//         "message": response
-//     }
-
-//     // Send the HTTP request to the Messenger Platform
-//     await request({
-//         "uri": "https://graph.facebook.com/v2.6/me/messages",
-//         "qs": { "access_token": PAGE_ACCESS_TOKEN },
-//         "method": "POST",
-//         "json": request_body
-//     }, (err, res, body) => {
-//         if (!err) {
-//             console.log('message sent!')
-//         } else {
-//             console.error("Unable to send message:" + err);
-//         }
-//     });
-// }
 
 let setupProfile = async (req, res) => {
     //Call Facebook profile api

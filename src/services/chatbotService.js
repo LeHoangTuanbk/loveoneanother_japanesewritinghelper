@@ -118,7 +118,7 @@ let sendMainOptions = async (sender_psid) => {
             `Here are some options that I can assist you with.
 
 1. Explain a Japanese grammar. 
-2. Rewrite the paragaph with correct grammar. 
+2. Change to sound more natural to a native Japanese speaker. 
 3. Change to a casual tone. 
 4. Change to a polite tone.
 5. Change to a super polite tone. 
@@ -133,7 +133,7 @@ let sendMainOptions = async (sender_psid) => {
 
 let sendGetStartedQuickReplyTemplate = async (sender_psid) => {
     let response = {
-        "text": "Now, choose one!",
+        "text": "Now, tap to choose one!",
         "quick_replies": [
             {
                 "content_type": "text",
@@ -142,7 +142,7 @@ let sendGetStartedQuickReplyTemplate = async (sender_psid) => {
             }, {
                 "content_type": "text",
                 "title": "2",
-                "payload": "REWRITE_CORRECT_GRAMMAR",
+                "payload": "REWRITE_NATURAL_TONE",
             }, {
                 "content_type": "text",
                 "title": "3",
@@ -164,6 +164,20 @@ let sendGetStartedQuickReplyTemplate = async (sender_psid) => {
 
 let handleRestartConversation = async (sender_psid) => {
     let restartNotificationResponse = { "text": "You requested to restart the conversation!" };
+    //Reset responded status. 
+    try {
+        await db.ResponseStatus.update({
+            responded: true
+        }, {
+            where: {
+                psid: sender_psid
+            }
+        });
+    }
+    catch (error) {
+        console.log(error);
+    }
+
     await callSendAPI(sender_psid, restartNotificationResponse);
     handleGetStarted(sender_psid);
 }
@@ -173,10 +187,16 @@ let handleGuideline = (sender_psid) => {
         try {
             //Send text responese
             let guidelineResponse = {
-                "text": "This feature will be implemented in the future!\nPlease restart the conversation to continue!"
+                "text": "The guideline will be updated in the future!\nPlease restart the conversation or tap to come back to main options to continue!"
             }
             // await sendAnImage(sender_psid);
             await callSendAPI(sender_psid, guidelineResponse);
+
+            let loveMessages = {
+                "text": "愛していますよ。🥰"
+            }
+            await callSendAPI(sender_psid, loveMessages);
+            await sendComeBackMainOption(sender_psid);
             resolve('done');
         } catch (e) {
             reject(e);
@@ -232,7 +252,7 @@ const handleRequest = async (sender_psid, payload) => {
         case "EXPLAIN_GRAMMAR":
             noficationResponse = {
                 "text": `You requested to explain a Japanese grammar!\n` +
-                    `Now! Send me the grammar that you would like me to explain.\n `+
+                    `Now! Send me the grammar that you would like me to explain.\n ` +
                     `For examle:\nThe Possessive Particle【の】,The Contextual Particle【で】, Past tense【Vた】,... `
             };
             break;
@@ -240,6 +260,12 @@ const handleRequest = async (sender_psid, payload) => {
             noficationResponse = {
                 "text": `You requested to rewrite paragraph with correct grammar!\n` +
                     `Now! Send me the paragraph that you would like me to correct. `
+            };
+            break;
+        case "REWRITE_NATURAL_TONE":
+            noficationResponse = {
+                "text": `You requested to rewrite paragraph with a more natural tone to a Japanese speaker!\n` +
+                    `Now! Send me the paragraph that you would like me to change. `
             };
             break;
         case "CHANGE_TO_CASUAL":
@@ -295,9 +321,10 @@ const handleFreeText = async (sender_psid, freeText) => {
 
         if (responseStatus === null || responseStatus.responded === true) {
             let response = {
-                "text": `Currently bot can not handle freetext like ${freeText}.Please restart bot, and try to follow bot's instructions.`
+                "text": `Currently bot can not handle freetext like ${freeText}.Please restart bot or tap come back to main options to continue.`
             }
             await callSendAPI(sender_psid, response);
+            sendComeBackMainOption(sender_psid);
         }
         else {
             //Call openAI api here to solve. 
@@ -323,7 +350,7 @@ const handleFreeText = async (sender_psid, freeText) => {
                         "text": "For example"
                     }
                     await callSendAPI(sender_psid, forExampleText);
-                    for (const example of useCases){
+                    for (const example of useCases) {
                         let exampleReponse = {
                             "text": example
                         };
@@ -364,6 +391,21 @@ const handleFreeText = async (sender_psid, freeText) => {
                     }
                     responseNotification = {
                         "text": "Here is the text after being changed to casual tone"
+                    }
+                    //Send notification message
+                    await callSendAPI(sender_psid, responseNotification);
+                    //Send results
+                    await callSendAPI(sender_psid, requestToOpenAI);
+                    break;
+
+                case "REWRITE_NATURAL_TONE":
+                    await markSeen(sender_psid);
+                    await sendTypingOn(sender_psid);
+                    requestToOpenAI = {
+                        "text": await openaiAPIService.handleChangeToNatural(freeText)
+                    }
+                    responseNotification = {
+                        "text": "Here is the text after being changed to natural tone"
                     }
                     //Send notification message
                     await callSendAPI(sender_psid, responseNotification);

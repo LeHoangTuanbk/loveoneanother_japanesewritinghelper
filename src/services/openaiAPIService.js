@@ -37,7 +37,7 @@ const handleExplainGrammar = async (freeText) => {
 
 const handleRewriteCorrectGrammar = async (freeText) => {
     let prompt = `I will give you text content delimited by {}, you will correct the spelling and grammar mistakes of this text. 
-    Keep the meaning the same. Make sure the re-written content's number of words is as close to the original text's number of words as possible. Do not alter the original structure and formatting outlined in any way.
+    Keep the meaning the same. Do not alter the original structure and formatting outlined in any way.
     If the original text has no spelling or grammar mistakes, respond this: "NO_GRAMMATICAL_MISTAKES_FOUND".
     Else if the original text has spelling or grammar mistakes, only correct any spelling or grammar mistakes if necessary, and do not make any unnecessary improvements.
 
@@ -61,6 +61,30 @@ const handleChangeToCasual = async (freeText) => {
     let prompt = `Change the Japanese text delimited by {} \ 
    into a new text with less formal and casual tone. The answer must be in Japanese. Only give me the output, nothing else.\
    Do not include any unnecessary words. 
+   {${freeText}}
+
+   Your answer:
+   `;
+    let responseFromOpenAI = await getCompletion(prompt);
+    // let responseFromOpenAI = {
+    //     "text": `Change to casual ${freeText}`
+    // };
+    console.log(responseFromOpenAI);
+    // let responseToUser = {
+    //     "text": `H`
+    // }
+    return responseFromOpenAI;
+}
+
+const handleChangeToNatural = async (freeText) => {
+    /*
+    1. Casual Tone:
+    - 今日、どこ行くの？ (Where are you going today?)
+    - 明日、一緒に遊ぼうよ！ (Let's hang out together tomorrow!)
+
+    */
+    let prompt = `Change the Japanese text delimited by {} \ 
+   into a new text to sound more natural to a native Japanese speaker. Keep the meaning the same. The answer must be in Japanese. Only give me the output, nothing else.\
    {${freeText}}
 
    Your answer:
@@ -130,12 +154,14 @@ const handleChangeToSuperPolite = async (freeText) => {
 // handleChangeToPolite("今、時間ある？")
 // let a = handleChangeToSuperPolite("今、時間ある？")
 // console.log(a);
-// let text = `昨日、東京に行きました。`;
+let text = `昨日、友達と一緒に遊び楽しました。`;
+// handleChangeToNatural(text);
 // handleRewriteCorrectGrammar(text);
 // handleExplainGrammar("the Japanese possessive particle 【の】");
 module.exports = {
     handleExplainGrammar: handleExplainGrammar,
     handleRewriteCorrectGrammar: handleRewriteCorrectGrammar,
+    handleChangeToNatural: handleChangeToNatural,
     handleChangeToCasual: handleChangeToCasual,
     handleChangeToPolite: handleChangeToPolite,
     handleChangeToSuperPolite: handleChangeToSuperPolite
