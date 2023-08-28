@@ -186,16 +186,76 @@ let handleGuideline = (sender_psid) => {
     return new Promise(async (resolve, reject) => {
         try {
             //Send text responese
-            let guidelineResponse = {
-                "text": "The guideline will be updated in the future!\nPlease restart the conversation or tap to come back to main options to continue!"
+            let welcomeGuidline = {
+                "text": `\
+Welcome to Love one another - Japanese writing helper! 😎     
+                `
             }
-            // await sendAnImage(sender_psid);
-            await callSendAPI(sender_psid, guidelineResponse);
+            await callSendAPI(sender_psid, welcomeGuidline);
 
-            let loveMessages = {
-                "text": "愛していますよ。🥰"
+            let ruleGuideline = {
+                "text": `\
+I want to help you get the most out of your experience with this chatbot. Here are 2 simple rules to you need follow:
+
+👉 Rule 1: Follow the bot's instructions:
+Please only interact with the chatbot as instructed. Avoid sending free text or performing actions the bot hasn't asked for.             
+👉 Rule 2: Read rule 1 once more.
+                `
             }
-            await callSendAPI(sender_psid, loveMessages);
+            await callSendAPI(sender_psid, ruleGuideline);
+
+            let restGuidline = {
+                "text": `\
+Every now and then, the bot takes a break. (Seriously? Even bot needs rest? 🤔). \
+So, if you don't get an instant reply, don't worry! Just give it about 20-30 seconds to wake up and reply.
+                `
+            }
+            await callSendAPI(sender_psid, restGuidline);
+
+            let toneDefinition = {
+                "text": `\
+Let's dive into some of the tone definitions I had in mind while developing this bot – I believe they will be useful to share them with you. 
+
+😊 1. Change to sound more natural to a native Japanese speaker.       
+Natural tone:         
+⭕ A natural Japanese sentence is grammatically correct, uses appropriate vocabulary, and follows the standard structure and conventions of the language. It effectively conveys the intended meaning in a way that sounds fluent and idiomatic to native speakers.         
+For example:         
+おいしい寿司を食べたいです。 (Oishii sushi o tabetai desu.) - "I want to eat delicious sushi."             
+❌ Unnatural tone: 
+An unnatural Japanese sentence contains grammatical errors, uses inappropriate vocabulary, or deviates significantly from standard language structure. It might sound awkward, confusing, or difficult to understand for native Japanese speakers.
+For example:
+こんにちは、食べたですか？ (Konnichiwa, tabeta desu ka?) - This sentence mixes up the verb and particle, making it sound strange. A natural version could be こんにちは、もう食べましたか？ (Konnichiwa, mou tabemashita ka?) - "Hello, have you already eaten?"
+
+👨‍👨‍👦‍👦 2. Change to a casual tone.
+This tone is informal and relaxed, often used among friends and in informal situations.
+For example: 
+今日、花火見に行く？ (Kyou, hanabi mi ni iku?) - "Wanna go watch the fireworks today?”
+
+👨‍🏫 3. Change to a polite tone.
+This tone is polite and respectful, used in formal situations or when addressing someone you're not very familiar with.
+For example: 
+申し訳ありませんが、英語で話せますか？ (Moushiwake arimasen ga, Eigo de hanasemasu ka?) - "I'm sorry, but do you speak English?”
+
+👑4. Change to a super polite tone.
+This tone is even more formal and respectful, used when addressing someone of higher status or in very formal situations.
+For example: 
+お忙しい中、お時間をいただきまして誠にありがとうございますした。 (Oisogashii naka, o-jikan o itadakimashite makoto ni arigatou gozaimasu.) - "I sincerely appreciate your time amidst your busy schedule.”            
+                `
+            }
+            await callSendAPI(sender_psid, toneDefinition);
+
+            let thatAll = {
+                "text": `That's all! 😄 `
+            }
+            await callSendAPI(sender_psid, thatAll);
+
+            let endAndLoveMessages = {
+                "text": `\
+どうぞ、Chatbotを楽しんで使ってくださいね。🤗
+愛していますよ。🥰
+                `
+            }
+            await callSendAPI(sender_psid, endAndLoveMessages);
             await sendComeBackMainOption(sender_psid);
             resolve('done');
         } catch (e) {
@@ -297,7 +357,7 @@ const handleRequest = async (sender_psid, payload) => {
 
 const sendComeBackMainOption = async (sender_psid) => {
     let response = {
-        "text": "Tap to comeback to main options!",
+        "text": "Tap 'Main options' to return to the main options and keep using the bot!",
         "quick_replies": [
             {
                 "content_type": "text",
