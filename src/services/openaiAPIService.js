@@ -26,7 +26,7 @@ const getCompletion = async (prompt, model = "gpt-3.5-turbo", temperature = 0) =
 
 const handleExplainGrammar = async (freeText) => {
     let prompt = `Explain ${freeText}in 150 words for English speakers with limited Japanese knowledge. 
-    Follow the JSON format with 'Meaning' and 'Usecases', using an array for 'Usecases'. Provide JSON text only, nothing else. 
+    Follow the JSON format with 'Meaning', and 'Usecases', using an array for 'Usecases'. Always provide Japanese example sentences in your answer to demonstrate usecases. Provide JSON text only, nothing else. 
    `;
     let responseFromOpenAI = await getCompletion(prompt);
     responseFromOpenAI = JSON.parse(responseFromOpenAI);
@@ -157,7 +157,7 @@ const handleChangeToSuperPolite = async (freeText) => {
 let text = `昨日、友達と一緒に遊び楽しました。`;
 // handleChangeToNatural(text);
 // handleRewriteCorrectGrammar(text);
-// handleExplainGrammar("the Japanese possessive particle 【の】");
+// handleExplainGrammar("Vるところだった");
 module.exports = {
     handleExplainGrammar: handleExplainGrammar,
     handleRewriteCorrectGrammar: handleRewriteCorrectGrammar,

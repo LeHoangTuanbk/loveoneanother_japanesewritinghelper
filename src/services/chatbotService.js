@@ -93,7 +93,7 @@ function markSeen(sender_psid) {
 }
 
 let sendHelloResponse = async (sender_psid) => {
-    let helloResponse = { "text": "Hello! What can I assist you with today?" };
+    let helloResponse = { "text": "Hello! What can I assist you with today? 🤝" };
     await callSendAPI(sender_psid, helloResponse);
 }
 
@@ -117,11 +117,11 @@ let sendMainOptions = async (sender_psid) => {
         "text":
             `Here are some options that I can assist you with.
 
-1. Explain a Japanese grammar. 
-2. Change to sound more natural to a native Japanese speaker. 
-3. Change to a casual tone. 
-4. Change to a polite tone.
-5. Change to a super polite tone. 
+🧐 1. Explain a Japanese grammar. 
+😊 2. Change to sound more natural to a native Japanese speaker. 
+👨‍👨‍👦‍👦 3. Change to a casual tone. 
+👮‍♂️ 4. Change to a polite tone.
+👑 5. Change to a super polite tone. 
         `
     }
 
@@ -216,7 +216,7 @@ So, if you don't get an instant reply, don't worry! Just give it about 20-30 sec
                 "text": `\
 Let's dive into some of the tone definitions I had in mind while developing this bot – I believe they will be useful to share them with you. 
 
-😊 1. Change to sound more natural to a native Japanese speaker.       
+😊 2. Change to sound more natural to a native Japanese speaker.       
 Natural tone:         
 ⭕ A natural Japanese sentence is grammatically correct, uses appropriate vocabulary, and follows the standard structure and conventions of the language. It effectively conveys the intended meaning in a way that sounds fluent and idiomatic to native speakers.         
 For example:         
@@ -226,17 +226,17 @@ An unnatural Japanese sentence contains grammatical errors, uses inappropriate v
 For example:
 こんにちは、食べたですか？ (Konnichiwa, tabeta desu ka?) - This sentence mixes up the verb and particle, making it sound strange. A natural version could be こんにちは、もう食べましたか？ (Konnichiwa, mou tabemashita ka?) - "Hello, have you already eaten?"
 
-👨‍👨‍👦‍👦 2. Change to a casual tone.
+👨‍👨‍👦‍👦 3. Change to a casual tone.
 This tone is informal and relaxed, often used among friends and in informal situations.
 For example: 
 今日、花火見に行く？ (Kyou, hanabi mi ni iku?) - "Wanna go watch the fireworks today?”
 
-👨‍🏫 3. Change to a polite tone.
+👮‍♂️ 4. Change to a polite tone.
 This tone is polite and respectful, used in formal situations or when addressing someone you're not very familiar with.
 For example: 
 申し訳ありませんが、英語で話せますか？ (Moushiwake arimasen ga, Eigo de hanasemasu ka?) - "I'm sorry, but do you speak English?”
 
-👑4. Change to a super polite tone.
+👑 5. Change to a super polite tone.
 This tone is even more formal and respectful, used when addressing someone of higher status or in very formal situations.
 For example: 
 お忙しい中、お時間をいただきまして誠にありがとうございますした。 (Oisogashii naka, o-jikan o itadakimashite makoto ni arigatou gozaimasu.) - "I sincerely appreciate your time amidst your busy schedule.”            
