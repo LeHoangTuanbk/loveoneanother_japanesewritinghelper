@@ -399,7 +399,8 @@ const handleFreeText = async (sender_psid, freeText) => {
                     let grammarMeaning = requestToOpenAI["Meaning"];
                     let useCases = requestToOpenAI["Usecases"];
                     let meaningResponseNotification = {
-                        "text": `Thank you for your request. Here is the meaning of ${freeText}:`
+                        "text": `Thank you for your request. 
+Here is the meaning of ${freeText}:`
                     };
                     await callSendAPI(sender_psid, meaningResponseNotification);
                     let meaningResponse = {
@@ -450,7 +451,7 @@ const handleFreeText = async (sender_psid, freeText) => {
                         "text": await openaiAPIService.handleChangeToCasual(freeText)
                     }
                     responseNotification = {
-                        "text": "Here is the text after being changed to casual tone"
+                        "text": "Thank you for your request.\nHere is the text after being changed to casual tone"
                     }
                     //Send notification message
                     await callSendAPI(sender_psid, responseNotification);
@@ -465,7 +466,8 @@ const handleFreeText = async (sender_psid, freeText) => {
                         "text": await openaiAPIService.handleChangeToNatural(freeText)
                     }
                     responseNotification = {
-                        "text": "Here is the text after being changed to natural tone"
+                        "text": `Thank you for your request. 
+Here is the text after being changed to natural tone.`
                     }
                     //Send notification message
                     await callSendAPI(sender_psid, responseNotification);
@@ -480,7 +482,9 @@ const handleFreeText = async (sender_psid, freeText) => {
                         "text": await openaiAPIService.handleChangeToPolite(freeText)
                     }
                     responseNotification = {
-                        "text": "Here is the text after being changed to polite tone"
+                        "text": `\
+Thank you for your request.
+Here is the text after being changed to polite tone.`
                     }
                     //Send notification message
                     await callSendAPI(sender_psid, responseNotification);
@@ -493,7 +497,9 @@ const handleFreeText = async (sender_psid, freeText) => {
                         "text": await openaiAPIService.handleChangeToSuperPolite(freeText)
                     }
                     responseNotification = {
-                        "text": "Here is the text after being changed to super polite tone"
+                        "text": `\
+Thank you for your request.
+Here is the text after being changed to super polite tone`
                     }
                     //Send notification message
                     await callSendAPI(sender_psid, responseNotification);
