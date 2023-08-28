@@ -154,7 +154,7 @@ const handleChangeToSuperPolite = async (freeText) => {
 // handleChangeToPolite("今、時間ある？")
 // let a = handleChangeToSuperPolite("今、時間ある？")
 // console.log(a);
-let text = `昨日、友達と一緒に遊び楽しました。`;
+// let text = `昨日、友達と一緒に遊び楽しました。`;
 // handleChangeToNatural(text);
 // handleRewriteCorrectGrammar(text);
 // handleExplainGrammar("Vるところだった");

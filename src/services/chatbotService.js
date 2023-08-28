@@ -451,7 +451,7 @@ Here is the meaning of ${freeText}:`
                         "text": await openaiAPIService.handleChangeToCasual(freeText)
                     }
                     responseNotification = {
-                        "text": "Thank you for your request.\nHere is the text after being changed to casual tone"
+                        "text": "Thank you for your request.\nHere is the text after being changed to casual tone."
                     }
                     //Send notification message
                     await callSendAPI(sender_psid, responseNotification);
@@ -499,7 +499,7 @@ Here is the text after being changed to polite tone.`
                     responseNotification = {
                         "text": `\
 Thank you for your request.
-Here is the text after being changed to super polite tone`
+Here is the text after being changed to super polite tone.`
                     }
                     //Send notification message
                     await callSendAPI(sender_psid, responseNotification);
