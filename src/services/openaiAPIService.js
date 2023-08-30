@@ -135,7 +135,7 @@ const handleChangeToSuperPolite = async (freeText) => {
     - すみませんが、明日、お時間をいただけましたら、どうぞよろしくお願い申し上げます。 (I apologize for the intrusion, but if I may have your time tomorrow, I humbly ask for your consideration.)
     */
     let prompt = `Change the Japanese text delimited by {} \ 
-   into a new text with super polite and super formal tone. Use Keigo and Kenjougo in Japanese as much as possible.\
+   into a new text with super polite and super formal tone. Use Keigo: Sonkeigo, Kenjougo and Teineigo in Japanese as much as possible.\
    The answer must be in Japanese. Only give me the output, nothing else.\
    Do not include any unnecessary words. 
    {${freeText}}
@@ -152,7 +152,7 @@ const handleChangeToSuperPolite = async (freeText) => {
     // }
     return responseFromOpenAI;
 }
-handleChangeToPolite("今日、花火見に行こうか？")
+// handleChangeToSuperPolite("今日、花火見に行こうか？")
 // let a = handleChangeToSuperPolite("今、時間ある？")
 // console.log(a);
 // let text = `昨日、友達と一緒に遊び楽しました。`;

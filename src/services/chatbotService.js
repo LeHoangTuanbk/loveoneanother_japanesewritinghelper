@@ -232,12 +232,12 @@ For example:
 今日、花火見に行く？ (Kyou, hanabi mi ni iku?) - "Wanna go watch the fireworks today?”
 
 👮‍♂️ 4. Change to a polite tone.
-This tone is polite and respectful, used in formal situations or when addressing someone you're not very familiar with.
+This tone is polite and respectful, used in formal situations or when addressing someone you're not very familiar with. It resembles Japanese Teineigo but can also involve Keigo usage sometimes.
 For example: 
 申し訳ありませんが、英語で話せますか？ (Moushiwake arimasen ga, Eigo de hanasemasu ka?) - "I'm sorry, but do you speak English?”
 
 👑 5. Change to a super polite tone.
-This tone is even more formal and respectful, used when addressing someone of higher status or in very formal situations.
+This tone is even more formal and respectful, used when addressing someone of higher status or in very formal situations. It often includes a lot of Keigo like Sonkeigo and Kenjougo.
 For example: 
 お忙しい中、お時間をいただきまして誠にありがとうございますした。 (Oisogashii naka, o-jikan o itadakimashite makoto ni arigatou gozaimasu.) - "I sincerely appreciate your time amidst your busy schedule.”            
                 `
