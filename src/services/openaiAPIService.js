@@ -108,7 +108,8 @@ const handleChangeToPolite = async (freeText) => {
 
     */
     let prompt = `Change the following Japanese text delimited by {} \ 
-   into a new text with polite and formal tone. The answer must be in Japanese. Only give me the output, nothing else.\
+   into a new text with formal tone. However, please do not use Japanese Keigo and Kenjougo, just use Teineigo is enough.\
+   The answer must be in Japanese. Only give me the output, nothing else.\
    Do not include any unnecessary words. 
    {${freeText}}
 
@@ -151,7 +152,7 @@ const handleChangeToSuperPolite = async (freeText) => {
     // }
     return responseFromOpenAI;
 }
-// handleChangeToPolite("今、時間ある？")
+handleChangeToPolite("今日、花火見に行こうか？")
 // let a = handleChangeToSuperPolite("今、時間ある？")
 // console.log(a);
 // let text = `昨日、友達と一緒に遊び楽しました。`;
