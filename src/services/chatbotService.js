@@ -212,10 +212,14 @@ So, if you don't get an instant reply, don't worry! Just give it about 20-30 sec
             }
             await callSendAPI(sender_psid, restGuidline);
 
+            let diveInTone = {
+                "text": "Let's dive into some of the tone definitions I had in mind while developing this bot - I believe they will be useful to share them with you."
+            }
+
+            await callSendAPI(sender_psid, diveInTone);
+            
             let toneDefinition = {
                 "text": `\
-Let's dive into some of the tone definitions I had in mind while developing this bot – I believe they will be useful to share them with you. 
-
 😊 2. Change to sound more natural to a native Japanese speaker.       
 Natural tone:         
 ⭕ A natural Japanese sentence is grammatically correct, uses appropriate vocabulary, and follows the standard structure and conventions of the language. It effectively conveys the intended meaning in a way that sounds fluent and idiomatic to native speakers.         

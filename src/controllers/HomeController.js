@@ -133,10 +133,6 @@ async function handleMessage(sender_psid, received_message) {
             }
         }
     }
-
-    // Send the response message
-    // chatbotService.callSendAPI(sender_psid, response);
-
 }
 
 // Handles messaging_postbacks events
@@ -162,7 +158,6 @@ async function handlePostback(sender_psid, received_postback) {
             await chatbotService.handleOthers(sender_psid, payload);
     }
     // Send the message to acknowledge the postback
-
 }
 
 let setupProfile = async (req, res) => {
@@ -280,6 +275,7 @@ let handleRequestFormData = async (req, res) => {
         return res.status(500).json({ message: "Internal server" });
     }
 }
+
 import db from '../models/index';
 const testDB = async (req, res) => {
     let data = await db.ResponseStatus.findAll();
@@ -295,5 +291,4 @@ module.exports = {
     handleRequestForm: handleRequestForm,
     handleRequestFormData: handleRequestFormData,
     testDB: testDB,
-
 }

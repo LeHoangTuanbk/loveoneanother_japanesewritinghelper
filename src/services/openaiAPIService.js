@@ -66,13 +66,7 @@ const handleChangeToCasual = async (freeText) => {
    Your answer:
    `;
     let responseFromOpenAI = await getCompletion(prompt);
-    // let responseFromOpenAI = {
-    //     "text": `Change to casual ${freeText}`
-    // };
     console.log(responseFromOpenAI);
-    // let responseToUser = {
-    //     "text": `H`
-    // }
     return responseFromOpenAI;
 }
 
@@ -90,13 +84,7 @@ const handleChangeToNatural = async (freeText) => {
    Your answer:
    `;
     let responseFromOpenAI = await getCompletion(prompt);
-    // let responseFromOpenAI = {
-    //     "text": `Change to casual ${freeText}`
-    // };
     console.log(responseFromOpenAI);
-    // let responseToUser = {
-    //     "text": `H`
-    // }
     return responseFromOpenAI;
 }
 
@@ -116,13 +104,7 @@ const handleChangeToPolite = async (freeText) => {
    Your answer:
    `;
     let responseFromOpenAI = await getCompletion(prompt);
-    // let responseFromOpenAI = {
-    //     "text": `Change to casual ${freeText}`
-    // };
     console.log(responseFromOpenAI);
-    // let responseToUser = {
-    //     "text": `H`
-    // }
     return responseFromOpenAI;
 }
 
@@ -143,15 +125,10 @@ const handleChangeToSuperPolite = async (freeText) => {
    Your answer:
    `;
     let responseFromOpenAI = await getCompletion(prompt);
-    // let responseFromOpenAI = {
-    //     "text": `Change to casual ${freeText}`
-    // };
     console.log(responseFromOpenAI);
-    // let responseToUser = {
-    //     "text": `H`
-    // }
     return responseFromOpenAI;
 }
+
 // handleChangeToSuperPolite("今日、花火見に行こうか？")
 // let a = handleChangeToSuperPolite("今、時間ある？")
 // console.log(a);
@@ -159,6 +136,7 @@ const handleChangeToSuperPolite = async (freeText) => {
 // handleChangeToNatural(text);
 // handleRewriteCorrectGrammar(text);
 // handleExplainGrammar("Vるところだった");
+
 module.exports = {
     handleExplainGrammar: handleExplainGrammar,
     handleRewriteCorrectGrammar: handleRewriteCorrectGrammar,
